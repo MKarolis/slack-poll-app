@@ -1,0 +1,73 @@
+/*.container{*/
+/*    margin-top: 50px;*/
+/*}*/
+
+/*body {*/
+/*    margin: 0;*/
+/*    font-family: "Montserrat", sans-serif;*/
+/*    -webkit-font-smoothing: antialiased;*/
+/*    -moz-osx-font-smoothing: grayscale;*/
+/*}*/
+
+/*code {*/
+/*    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",*/
+/*    monospace;*/
+/*}*/
+
+/*body{*/
+/*    padding-bottom: 80px;*/
+/*}*/
+
+/*.container{*/
+/*    margin-top: 0;*/
+/*}*/
+
+/*.sign_in_logo {*/
+/*    display: block;*/
+/*    max-width: 100%;*/
+/*    margin: 50px auto 20px auto;*/
+/*}*/
+
+/*#SlackButton {*/
+/*    margin-left: -10px;*/
+/*}*/
+
+/*.logo-bottom-small-container{*/
+/*    display: inline-block;*/
+/*    margin-left: 50px;*/
+/*}*/
+/*.links-container-bottom{*/
+/*    position: absolute;*/
+/*    bottom: 50px;*/
+/*    left: 0;*/
+/*}*/
+/*.logo-bottom-small-container.slack img{*/
+/*    transform: scale(2);*/
+/*}*/
+/*.logo-bottom-small{*/
+/*    height: 50px;*/
+/*}*/
+
+/*@media(max-width: 576px){*/
+/*    #SlackButton{*/
+/*        margin-left: unset;*/
+/*    }*/
+/*    .links-container-bottom{*/
+/*        position: relative;*/
+/*        margin: 100px auto;*/
+/*        width: max-content;*/
+/*    }*/
+/*    .logo-bottom-small{*/
+/*        height: 40px;*/
+/*    }*/
+/*    .logo-bottom-small-container{*/
+/*        margin: 0;*/
+/*    }*/
+/*    .wizard{*/
+/*        margin: 0 20px;*/
+/*    }*/
+/*}*/
+
+/*.page {*/
+/*    display: none !important;*/
+/*}*/

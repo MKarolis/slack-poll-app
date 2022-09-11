@@ -1,0 +1,30 @@
+﻿@page "/"
+
+@if (LoggedIn) {
+    <AppRoot LogOut=@LogOut/>
+}
+else
+{
+    <SignIn />
+}
+
+
+@code {
+    [CascadingParameter]
+    private AccessTokenStateProvider AccessTokenStateProvider { get; set; }
+    
+    private bool LoggedIn { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (string.IsNullOrWhiteSpace(AccessTokenStateProvider.SlackAccessToken) == false) {
+            LoggedIn = true;
+        }
+    }
+
+    private async Task LogOut()
+    {
+        await AccessTokenStateProvider.ClearAsync();
+        LoggedIn = false;
+    }
+}

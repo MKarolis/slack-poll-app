@@ -1,0 +1,13 @@
+.navbar {
+    padding-left: 2rem;
+    padding-right: 2rem;
+
+    background: #FFF !important;
+    border-bottom: 2px solid;
+    color: #383838;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 500;
+}

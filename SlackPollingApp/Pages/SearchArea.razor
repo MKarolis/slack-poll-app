@@ -1,0 +1,74 @@
+﻿@using SlackPollingApp.Model.Entity
+<div class="container justify-content-center">
+    <EditForm Model="@_model" OnSubmit="@FormSubmitted">
+        <div class="p-1 bg-light rounded rounded-pill shadow-sm mb-4">
+            <div class="input-group">
+                <input @bind="_model.Value" type="search" placeholder="Enter poll search criteria" aria-describedby="button-addon1" class="form-control border-0 bg-light">
+                <div class="input-group-append">
+                    <button id="button-addon1" type="submit" class="btn btn-link text-primary search-button">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" checked disabled>
+            <label class="form-check-label" for="inlineCheckbox1">Search by Poll title</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input @bind="_model.ByOption" class="form-check-input" type="checkbox" id="by-option" value="by-option">
+            <label class="form-check-label" for="by-option">Search by Option</label>
+        </div>
+    </EditForm>
+    @if (_searchActive)
+    {
+        <p>Found @_filtered.Count results. Update search criteria or <a href="#" @onclick="@SearchCancelled">see all polls</a></p>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<Poll> polls { get; set; }
+    [Parameter]
+    public EventCallback<bool> SetInSearch { get; set; }
+    [Parameter]
+    public EventCallback<List<Poll>> SetFiltered { get; set; }
+
+    private bool _searchActive = false;
+    private List<Poll> _filtered = new();
+    
+    class SearchModel
+    {
+        public string Value { get; set; }
+        public bool ByOption { get; set; }
+    }
+
+    SearchModel _model = new();
+    
+    void FormSubmitted()
+    {
+        if (string.IsNullOrWhiteSpace(_model.Value)) return;
+        
+        _searchActive = true;
+
+        var criteria = _model.Value.Trim();
+        _filtered = polls.Where(p => p.Title.IndexOf(criteria, StringComparison.OrdinalIgnoreCase ) >= 0 
+                                     || (_model.ByOption && p.Options.Any(o => o.Title.IndexOf(criteria, StringComparison.OrdinalIgnoreCase ) >= 0))
+                                     ).ToList();
+        
+        SetInSearch.InvokeAsync(true);
+        SetFiltered.InvokeAsync(_filtered);
+        
+        Console.WriteLine(_model.Value);
+        Console.WriteLine(_model.ByOption);
+    }
+
+    void SearchCancelled()
+    {
+        _searchActive = false;
+        _filtered = new List<Poll>();
+        SetInSearch.InvokeAsync(false);
+        _model.Value = "";
+        _model.ByOption = false;
+    }
+}

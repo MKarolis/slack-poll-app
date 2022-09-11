@@ -1,0 +1,40 @@
+.tooltip-inner{
+    max-width: 400px;
+    text-align: justify;
+    background-color: rgba(0,0,0,0.9);
+}
+
+.modal-option {
+    color: #4C4C4C;
+    text-align: left;
+    font-weight: 500;
+    padding-top: 5px;
+}
+.progress{
+    height: 25px;
+}
+.progress-bar{
+    background: #FF3454;
+    font-weight: 700;
+}
+.pull-label .progress-bar{
+    text-indent: 50px;
+    color: #4C4C4C;
+}
+.modal-footer {
+    margin-top: 10px;
+}
+@media(max-width: 576px){
+    .pull-label .progress-bar{
+        text-indent: 40px;
+    }
+    .tooltip-inner{
+        max-width: 90%;
+    }
+}
+
+.subscript {
+    padding-left: 5px;
+    font-size: .8rem;
+    color: #4C4C4C;
+}

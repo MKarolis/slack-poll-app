@@ -1,0 +1,102 @@
+﻿@using SlackPollingApp.Model.Entity
+@using SlackPollingApp.Business.Service
+@using Microsoft.AspNetCore.SignalR.Client
+@using SlackPollingApp.Hubs
+
+@inject PollService PollService
+@inject NavigationManager navigationManager
+
+@if (_polls.Count > 0)
+{
+    <h2 class="main-heading">Here are your <span class="pink-accent"> latest polls</span></h2>
+}
+else
+{
+    <h2 class="main-heading">Sadly, you have no<span class="pink-accent"> active polls</span></h2>
+
+}
+@if (_polls.Count > 0)
+{
+    <SearchArea Polls="@_polls" SetInSearch="@HandleSetInSearch" SetFiltered="@SetFiltered"/>
+}
+<div class="row polls">
+    @foreach (var poll in _inSearch ? _filtered : _polls)
+    {
+        <PollCard 
+            Poll="@poll" 
+            OnLock="@(async (status) => await HandleLock(poll, status))" 
+            OnDelete="@(async () => await HandleDelete(poll))"/>
+    }
+</div>
+
+@code {
+    [CascadingParameter]
+    private AccessTokenStateProvider AccessTokenStateProvider { get; set; }
+    
+    private List<Poll> _polls = new();
+    private List<Poll> _filtered = new();
+
+    private bool _inSearch = false;
+    
+    private HubConnection _hubConnection;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _polls = await PollService.GetUserPollsAsync(AccessTokenStateProvider.SlackUserId);
+        
+        var baseUrl = navigationManager.BaseUri;
+        var hubUrl = baseUrl.TrimEnd('/') + PollHub.HubUrl;
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(hubUrl)
+            .Build();
+        _hubConnection.On<string>(PollHub.EventPollCreated, async (owner) =>
+        {
+            if (AccessTokenStateProvider.SlackUserId == owner)
+            {
+                _polls = await PollService.GetUserPollsAsync(AccessTokenStateProvider.SlackUserId);
+                StateHasChanged();
+            }
+        });
+        _hubConnection.On<string, string>(PollHub.EventPollVoteChanged, async (owner, pollId) =>
+        {
+            if (AccessTokenStateProvider.SlackUserId == owner)
+            {
+                var poll = await PollService.GetPollByIdAsync(pollId);
+                var replaceIndex = _polls.FindIndex(p => p.Id == pollId);
+                _polls[replaceIndex] = poll;
+                if (_inSearch)
+                {
+                    replaceIndex = _filtered.FindIndex(p => p.Id == pollId);
+                    _filtered[replaceIndex] = poll;
+                }
+                StateHasChanged();
+            }
+        });
+        await _hubConnection.StartAsync();
+    }
+
+    private async Task HandleLock(Poll poll, bool status)
+    {
+        poll.Locked = status;
+        if (_inSearch) _polls.Find(p => p.Id == poll.Id)!.Locked = status;
+        await PollService.SetPollLocked(poll.Id, status);
+    }
+    
+    private async Task HandleDelete(Poll poll)
+    {
+        await PollService.DeletePollById(poll.Id);
+        _polls.Remove(poll);
+        if (_inSearch) _filtered.Remove(poll);
+    }
+
+    private void HandleSetInSearch(bool val)
+    {
+        _inSearch = val;
+        StateHasChanged();
+    }
+
+    private void SetFiltered(List<Poll> filtered)
+    {
+        _filtered = filtered;
+    }
+}

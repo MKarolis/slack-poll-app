@@ -1,0 +1,40 @@
+﻿@inject NavigationManager NavigationManager
+
+<div id="signIn">
+  <div class="container">
+      <div class="row justify-content-center">
+          <div class="col-md-7 col-xs-12">
+              <h1 class="center-heading" >Pollo</h1>
+              <p class="center-subheading">Slack polls made simple</p>
+          </div>
+      </div>
+      <div class="row justify-content-center">
+          <div id="SlackButton">
+              <a
+                  @onclick="@InitSignIn"
+                  id="SlackButton"
+                  href="#"
+              >
+                  <img
+                      alt="SlackButton"
+                      height="40"
+                      width="172"
+                      src="https://platform.slack-edge.com/img/sign_in_with_slack.png"
+                      srcSet="https://platform.slack-edge.com/img/sign_in_with_slack.png 1x, https://platform.slack-edge.com/img/sign_in_with_slack@2x.png 2x"
+                  />
+              </a>
+          </div>
+      </div>
+  </div>
+  <div class="links-container-bottom">
+      <a class="logo-bottom-small-container slack" href="https://www.slack.com/">
+          <img class="logo-bottom-small" src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Slack_icon_2019.svg/2048px-Slack_icon_2019.svg.png" />
+      </a>
+  </div>
+</div>
+
+@code {
+    private void InitSignIn() {
+        NavigationManager.NavigateTo("/slack-grant");
+    }
+}

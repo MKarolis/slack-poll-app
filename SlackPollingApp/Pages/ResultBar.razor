@@ -1,0 +1,35 @@
+﻿@using SlackPollingApp.Model.Entity
+
+<div class="row">
+    <div class="col-md-5 col-sm-12 order-md-2 align-self-center">
+        <h5 class="modal-option">
+            @Option.Title
+            @if (Option.Votes.Count > 0)
+            {
+                <Tooltip Text="@string.Join(", ", Option.Votes.Select(v => v.Name))">
+                    <span class="subscript"> votes</span>
+                </Tooltip>
+            }
+        </h5>
+    </div>
+    <div class="col-md-7 col-sm-12 order-md-1 align-self-center">
+        <div class="progress @(_percentage < 10 ? "pull-label" : "")">
+            <div class="progress-bar" role="progressbar" style="width: @_percentage%" aria-valuenow="@_percentage" aria-valuemin="0" aria-valuemax="100">@_percentage%</div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Option Option { get; set; }
+    [Parameter]
+    public int TotalVotes { get; set; }
+
+    private int _percentage;
+
+    protected override Task OnParametersSetAsync()
+    {
+        _percentage = (int)((TotalVotes > 0 ? (double) Option.Votes.Count / TotalVotes : 0) * 100);
+        return base.OnParametersSetAsync();
+    }
+}

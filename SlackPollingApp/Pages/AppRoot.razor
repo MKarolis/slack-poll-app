@@ -1,0 +1,9 @@
+﻿<NavBar LogOut="@(async(e) => await LogOut.InvokeAsync())" />
+<div class="container">
+    <Polls />
+</div>
+
+@code {
+    [Parameter]
+    public EventCallback LogOut{ get; set; }
+}

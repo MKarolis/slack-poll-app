@@ -1,0 +1,96 @@
+﻿@using SlackPollingApp.Model.Entity
+<div class="col-md-6 col-sm-12">
+    <div class="card">
+        <div class="card-body">
+            <a href="#" @onfocusout="@(async () => await HandleCloseTooltip())" @onclick="HandleOpenTooltip" class="delete-poll-icon">
+                <i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i>
+            </a>
+            @if (_tooltipVisible)
+            {
+                <div class="tooltip-container">
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#@_lockModalId">@(Poll.Locked ? "Unfreeze" : "Freeze") the Poll</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#@_deleteModalId">Delete the Poll</a>
+                    </div>
+                </div>
+            }
+            <h5 class="card-title">@Poll.Title @(Poll.Locked ? "(Frozen)" : "")</h5>
+            <p class="card-text">
+                <span class="pink-accent">Channel ID: </span>@Poll.ChannelId
+            </p>
+            <p class="card-text">
+                <span class="pink-accent">Date: </span> @Poll.Date.ToLocalTime().ToString("MM/dd/yyyy HH:mm:ss")
+            </p>
+            <p class="card-text">
+                <span class="pink-accent">Number of options: </span> @Poll.Options.Count
+            </p>
+            <p class="card-text">
+                <span class="pink-accent">Number of votes: </span> @Poll.Options.Sum(o => o.Votes.Count)
+            </p>
+            <p class="card-text">
+                <span class="pink-accent">Properties: </span>@BuildProperties()
+            </p>
+            <a href="#" data-toggle="modal" data-target="#@_resultModalId" class="btn btn-primary view-results-btn">View results</a>
+        </div>
+    </div>
+    <ResultModal ModalId="@_resultModalId" Poll="@Poll"/>
+    <ConfirmModal
+        ModalId="@_lockModalId"
+        Title="Freezing Confirmation"
+        OnConfirm="@(async (e) => await OnLock.InvokeAsync(!Poll.Locked))"
+        Description="@GetFreezeModalConfirmation()"/>
+    <ConfirmModal
+        ModalId="@_deleteModalId"
+        Title="Deletion Confirmation"
+        OnConfirm="@(async (e) => await OnDelete.InvokeAsync())"
+        Description="Are you sure you want to delete the poll? The action cannot be undone."/>
+</div>
+
+@code {
+
+    [CascadingParameter]
+    private AccessTokenStateProvider AccessTokenStateProvider { get; set; }
+
+    [Parameter]
+    public Poll Poll { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnLock { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnDelete { get; set; }
+
+    private bool _tooltipVisible = false;
+
+    private string _resultModalId = $"result-modal-{Guid.NewGuid().ToString()}";
+    private string _lockModalId = $"lock-modal-{Guid.NewGuid().ToString()}";
+    private string _deleteModalId = $"delete-modal-{Guid.NewGuid().ToString()}";
+
+    private void HandleOpenTooltip()
+    {
+        _tooltipVisible = true;
+    }
+
+    private async Task HandleCloseTooltip()
+    {
+        await Task.Delay(200);
+        _tooltipVisible = false;
+    }
+
+    private string BuildProperties()
+    {
+        var tokens = new List<string>();
+        if (Poll.MultiSelect) tokens.Add("Multi-vote");
+        if (!Poll.ShowVoters) tokens.Add("Anonymous");
+        return string.Join("; ", tokens);
+    }
+
+    private string GetFreezeModalConfirmation()
+    {
+        return Poll.Locked 
+            ? "Are you sure you want to unfreeze the poll? Users will be able to change their votes" 
+            : "Are you sure you want to freeze the poll? Users will not be able to change their votes";
+    }
+
+}

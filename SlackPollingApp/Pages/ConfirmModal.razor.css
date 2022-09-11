@@ -1,0 +1,42 @@
+.modal-header{
+    border-bottom: 2px solid #FF3454;
+}
+.modal-heading{
+    color: #4C4C4C;
+    font-weight: 700;
+}
+button.close span:first-child{
+    color: #FF3454 !important;
+    font-size: 2rem !important;
+}
+.modal-footer{
+    border-top: 2px solid #FF3454;
+}
+.modal-footer .btn{
+    font-weight: 700;
+    color: #4C4C4C;
+    background: none;
+    border: 2px solid #FF3454 !important;
+    transition: all 200ms ease-in-out;
+    position: relative;
+}
+
+.modal-footer .btn:hover,
+.modal-footer .btn:focus,
+.modal-footer .btn:active{
+    color: #FFF !important;
+    background: #FF3454 !important;
+    box-shadow: none !important;
+}
+
+.tooltip-inner{
+    text-align: left;
+}
+
+.confirm-button {
+    font-weight: 700;
+    color: #FFF !important;
+    background: #FF3454 !important;
+    border: 2px solid #FF3454 !important;
+    transition: all 200ms ease-in-out;
+}

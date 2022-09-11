@@ -1,0 +1,43 @@
+﻿@using Microsoft.AspNetCore.ProtectedBrowserStorage
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject ProtectedLocalStorage ProtectedLocalStorage
+
+
+@if (_hasLoaded) {
+    <CascadingValue Value="@this">
+        @ChildContent
+    </CascadingValue>
+}
+
+@code {
+    private bool _hasLoaded;
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    public string SlackAccessToken { get; set; }
+    public string SlackUserId { get; set; }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        if (firstRender) {
+            SlackAccessToken = await ProtectedSessionStore.GetAsync<string>(nameof(SlackAccessToken));
+            SlackUserId = await ProtectedSessionStore.GetAsync<string>(nameof(SlackUserId));
+
+            _hasLoaded = true;
+            StateHasChanged();
+        }
+    }
+
+    public async Task SaveChangesAsync() {
+        await ProtectedSessionStore.SetAsync(nameof(SlackAccessToken), SlackAccessToken);
+        await ProtectedSessionStore.SetAsync(nameof(SlackUserId), SlackUserId);
+    }
+
+    public async Task ClearAsync() {
+        SlackAccessToken = string.Empty;
+        SlackUserId = string.Empty;
+
+        await ProtectedSessionStore.DeleteAsync(nameof(SlackAccessToken));
+        await ProtectedSessionStore.DeleteAsync(nameof(SlackUserId));
+    }
+}

@@ -1,0 +1,14 @@
+﻿<nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Pollo</a>
+
+    <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav mr-auto">
+        </ul>
+        <a href="#" @onclick="@(async(e) => await LogOut.InvokeAsync())">Logout</a>
+    </div>
+</nav>
+
+@code {
+    [Parameter]
+    public EventCallback LogOut{ get; set; }
+}
