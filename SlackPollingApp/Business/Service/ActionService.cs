@@ -13,11 +13,11 @@ namespace SlackPollingApp.Business.Service
 {
     public class ActionService
     {
-        private readonly HttpRequestSender _httpRequestSender;
-        private readonly PollService _pollService;
-        private readonly NotificationService _notificationService;
+        private readonly IHttpRequestSender _httpRequestSender;
+        private readonly IPollService _pollService;
+        private readonly INotificationService _notificationService;
 
-        public ActionService(HttpRequestSender httpRequestSender, PollService pollService, NotificationService notificationService)
+        public ActionService(IHttpRequestSender httpRequestSender, IPollService pollService, INotificationService notificationService)
         {
             _httpRequestSender = httpRequestSender;
             _pollService = pollService;
@@ -67,15 +67,23 @@ namespace SlackPollingApp.Business.Service
                 await _httpRequestSender.PostAsync(interactionDto.ResponseUrl, updatedMsg);
                 await _notificationService.PublishPollVoteChanged(updatedPoll.Owner, updatedPoll.Id);
             }
-            catch (CantMultiVoteException e)
+            catch (System.Exception e)
             {
+                bool isInternalError = !(e is CantMultiVoteException);
+                string warningMessage = isInternalError ? 
+                    "Unexpected error, try again later" : "You cannot vote for multiple options in this poll";
                 var warningModalDto = new ShowViewDto
                 {
                     TriggerId = interactionDto.TriggerId,
-                    View = ModalUiHelper.BuildWarningModal("You cannot vote for multiple options in this poll")
+                    View = ModalUiHelper.BuildWarningModal(warningMessage)
                 };
-            
+
                 await _httpRequestSender.PostAsync(OpenViewUrl, warningModalDto);
+                
+                if (isInternalError)
+                {
+                    throw;
+                }
             }
         }
 

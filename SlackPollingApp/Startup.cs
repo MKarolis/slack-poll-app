@@ -38,15 +38,18 @@ namespace SlackPollingApp
             services.Configure<DatabaseSettings>(Configuration.GetSection("MongoConnection"));
             
             services.AddHttpClient();
+            services.AddSingleton<IHttpRequestSender, HttpRequestSender>();
             services.AddSingleton<HttpRequestSender>();
             
             services.AddSingleton<MongoContext>();
             services.AddSingleton<PollRepository>();
 
+            services.AddSingleton<IPollService, PollService>();
             services.AddSingleton<PollService>();
             services.AddSingleton<ActionService>();
             services.AddSingleton<SlashCommandService>();
             services.AddSingleton<AuthService>();
+            services.AddSingleton<INotificationService, NotificationService>();
             services.AddSingleton<NotificationService>();
             
             services.AddResponseCompression(opts =>

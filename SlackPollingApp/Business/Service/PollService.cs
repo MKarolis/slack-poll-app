@@ -13,7 +13,7 @@ using SlackPollingApp.Model.Slack.Request;
 
 namespace SlackPollingApp.Business.Service
 {
-    public class PollService
+    public class PollService : IPollService
     {
         private readonly PollRepository _pollRepository;
         private readonly HttpRequestSender _httpRequestSender;

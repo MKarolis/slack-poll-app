@@ -4,7 +4,7 @@ using SlackPollingApp.Hubs;
 
 namespace SlackPollingApp.Business.Service
 {
-    public class NotificationService
+    public class NotificationService : INotificationService
     {
         private readonly IHubContext<PollHub> _hub;
 

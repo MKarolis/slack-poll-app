@@ -10,7 +10,7 @@ using SlackPollingApp.Core.Config;
 
 namespace SlackPollingApp.Core.Http
 {
-    public class HttpRequestSender
+    public class HttpRequestSender : IHttpRequestSender
     {
         private static readonly JsonSerializerOptions DefaultJsonOptions = new()
         {
@@ -32,11 +32,11 @@ namespace SlackPollingApp.Core.Http
             var httpClient = GetClient();
             var bodyJson = JsonSerializer.Serialize(body, DefaultJsonOptions);
             Console.WriteLine(bodyJson);
-            
+
             var requestContent = new StringContent(bodyJson, Encoding.UTF8, "application/json");
             var response = await httpClient.PostAsync(url, requestContent);
             response.EnsureSuccessStatusCode();
-            
+
             return await response.Content.ReadAsStringAsync();
         }
 
