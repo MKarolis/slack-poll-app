@@ -12,6 +12,8 @@ namespace SlackPollingApp.Core.Http
 {
     public interface IHttpRequestSender
     {
-        Task<string> PostToSlackAsync(string path, object body);
+        Task<string> PostToSlackByPathAsync(string path, object body);
+        
+        Task<string> PostAsync(string url, object body);
     }
 }

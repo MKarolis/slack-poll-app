@@ -27,9 +27,22 @@ namespace SlackPollingApp.Core.Http
             _slackConfig = slackOptions.Value;
         }
 
-        public async Task<string> PostToSlackAsync(string path, object body)
+        public async Task<string> PostToSlackByPathAsync(string path, object body)
         {
             String url = _slackConfig.Host + path;
+            var httpClient = GetClient();
+            var bodyJson = JsonSerializer.Serialize(body, DefaultJsonOptions);
+            Console.WriteLine(bodyJson);
+
+            var requestContent = new StringContent(bodyJson, Encoding.UTF8, "application/json");
+            var response = await httpClient.PostAsync(url, requestContent);
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsStringAsync();
+        }
+        
+        public async Task<string> PostAsync(string url, object body)
+        {
             var httpClient = GetClient();
             var bodyJson = JsonSerializer.Serialize(body, DefaultJsonOptions);
             Console.WriteLine(bodyJson);

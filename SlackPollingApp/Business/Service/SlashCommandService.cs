@@ -27,7 +27,7 @@ namespace SlackPollingApp.Business.Service
                 View = modal
             };
             
-            await _httpRequestSender.PostToSlackAsync(OpenViewPath, showModalDto);
+            await _httpRequestSender.PostToSlackByPathAsync(OpenViewPath, showModalDto);
         }
     }
 }

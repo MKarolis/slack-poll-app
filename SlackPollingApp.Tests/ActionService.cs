@@ -56,7 +56,7 @@ public class ActionServiceTest
         _pollService.Setup(s => s.ToggleVote(_interactionDto).Result).Returns(_updatedPoll);
         await _actionService.HandleIncomingAction(_interactionDto);
         
-        _httpRequestSender.Verify(s => s.PostToSlackAsync(_interactionDto.ResponseUrl, 
+        _httpRequestSender.Verify(s => s.PostAsync(_interactionDto.ResponseUrl, 
             It.Is<PostMessageDto>(msg => msg.Blocks[0].Text.Text.Contains("MockTitle"))));
         _notificationService.Verify(
             s => s.PublishPollVoteChanged(_updatedPoll.Owner, _updatedPoll.Id));
@@ -70,13 +70,13 @@ public class ActionServiceTest
         await _actionService.HandleIncomingAction(_interactionDto);
             
         _httpRequestSender.Verify(
-            s => s.PostToSlackAsync(It.IsAny<string>(), It.IsAny<PostMessageDto>()),
+            s => s.PostAsync(It.IsAny<string>(), It.IsAny<PostMessageDto>()),
             Times.Never());
         _notificationService.Verify(
             s => s.PublishPollVoteChanged(It.IsAny<string>(), It.IsAny<string>()),
             Times.Never());
         _httpRequestSender.Verify(
-            s => s.PostToSlackAsync(
+            s => s.PostAsync(
                 It.IsAny<string>(), 
                 It.Is<ShowViewDto>(view => view.View.Blocks[0].Text.Text.Contains("You cannot vote")))
             );
@@ -90,13 +90,13 @@ public class ActionServiceTest
         Assert.ThrowsAsync<Exception>(() => _actionService.HandleIncomingAction(_interactionDto));
         
         _httpRequestSender.Verify(
-            s => s.PostToSlackAsync(It.IsAny<string>(), It.IsAny<PostMessageDto>()),
+            s => s.PostAsync(It.IsAny<string>(), It.IsAny<PostMessageDto>()),
             Times.Never());
         _notificationService.Verify(
             s => s.PublishPollVoteChanged(It.IsAny<string>(), It.IsAny<string>()),
             Times.Never());
         _httpRequestSender.Verify(
-            s => s.PostToSlackAsync(
+            s => s.PostAsync(
                 It.IsAny<string>(), 
                 It.Is<ShowViewDto>(view => view.View.Blocks[0].Text.Text.Contains("Unexpected error")))
         );

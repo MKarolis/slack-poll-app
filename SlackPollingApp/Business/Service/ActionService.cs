@@ -64,7 +64,7 @@ namespace SlackPollingApp.Business.Service
                     ReplaceOriginal = true,
                     Blocks = MessageUiHelper.RebuildUpdatedMessageBlocks(updatedPoll)
                 };
-                await _httpRequestSender.PostToSlackAsync(interactionDto.ResponseUrl, updatedMsg);
+                await _httpRequestSender.PostAsync(interactionDto.ResponseUrl, updatedMsg);
                 await _notificationService.PublishPollVoteChanged(updatedPoll.Owner, updatedPoll.Id);
             }
             catch (System.Exception e)
@@ -78,7 +78,7 @@ namespace SlackPollingApp.Business.Service
                     View = ModalUiHelper.BuildWarningModal(warningMessage)
                 };
 
-                await _httpRequestSender.PostToSlackAsync(OpenViewPath, warningModalDto);
+                await _httpRequestSender.PostToSlackByPathAsync(OpenViewPath, warningModalDto);
                 
                 if (isInternalError)
                 {
@@ -107,7 +107,7 @@ namespace SlackPollingApp.Business.Service
                 View = modal
             };
 
-            await _httpRequestSender.PostToSlackAsync(UpdateViewPath, updateRequest);
+            await _httpRequestSender.PostToSlackByPathAsync(UpdateViewPath, updateRequest);
         }
         
         private async Task HandleModalSubmission(SlackInteractionDto interactionDto)
@@ -115,7 +115,7 @@ namespace SlackPollingApp.Business.Service
             var poll = await _pollService.CreatePoll(interactionDto);
 
             var messageDto = MessageUiHelper.ComposeInitialMessage(poll);
-            var result = await _httpRequestSender.PostToSlackAsync(PostMessagePath, messageDto);
+            var result = await _httpRequestSender.PostToSlackByPathAsync(PostMessagePath, messageDto);
             var resultDto = JsonSerializer.Deserialize<MessageCreatedDto>(result);
 
             await _pollService.UpdatePollTimestamp(poll.Id, resultDto?.Ts);
