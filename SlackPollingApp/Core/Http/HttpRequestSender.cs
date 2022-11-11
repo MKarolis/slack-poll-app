@@ -21,14 +21,15 @@ namespace SlackPollingApp.Core.Http
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly SlackConfig _slackConfig;
 
-        public HttpRequestSender(IHttpClientFactory httpClientFactory, IOptions<SlackConfig> slackOptions)
+        public HttpRequestSender(IHttpClientFactory httpClientFactory, IOptions<SlackConfig> slackOptions) 
         {
             _httpClientFactory = httpClientFactory;
             _slackConfig = slackOptions.Value;
         }
 
-        public async Task<string> PostAsync(string url, object body)
+        public async Task<string> PostToSlackAsync(string path, object body)
         {
+            String url = _slackConfig.Host + path;
             var httpClient = GetClient();
             var bodyJson = JsonSerializer.Serialize(body, DefaultJsonOptions);
             Console.WriteLine(bodyJson);

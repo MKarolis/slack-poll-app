@@ -77,7 +77,7 @@ namespace SlackPollingApp.Business.Service
                 Ts = updatedPoll.MessageTimestamp,
                 Blocks = MessageUiHelper.RebuildUpdatedMessageBlocks(updatedPoll)
             };
-            await _httpRequestSender.PostAsync(CommonSlackUris.EditMessageUrl, updatedMsg);
+            await _httpRequestSender.PostToSlackAsync(CommonSlackPaths.EditMessagePath, updatedMsg);
         }
 
         public async Task<List<Poll>> GetUserPollsAsync(string userId)
@@ -96,7 +96,7 @@ namespace SlackPollingApp.Business.Service
                 Ts = poll.MessageTimestamp
             };
 
-            await _httpRequestSender.PostAsync(CommonSlackUris.DeleteMessageUrl, deleteMessageDto);
+            await _httpRequestSender.PostToSlackAsync(CommonSlackPaths.DeleteMessagePath, deleteMessageDto);
         }
 
         public async Task<Poll> GetPollByIdAsync(string pollId)

@@ -6,7 +6,7 @@ using SlackPollingApp.Model.Slack.Data;
 using SlackPollingApp.Model.Slack.Helper;
 using SlackPollingApp.Model.Slack.Request;
 using static SlackPollingApp.Model.Slack.Common.ActionConstants;
-using static SlackPollingApp.Model.Slack.Common.CommonSlackUris;
+using static SlackPollingApp.Model.Slack.Common.CommonSlackPaths;
 using static SlackPollingApp.Model.Slack.Common.BlockBuildingConstants;
 
 namespace SlackPollingApp.Business.Service
@@ -64,7 +64,7 @@ namespace SlackPollingApp.Business.Service
                     ReplaceOriginal = true,
                     Blocks = MessageUiHelper.RebuildUpdatedMessageBlocks(updatedPoll)
                 };
-                await _httpRequestSender.PostAsync(interactionDto.ResponseUrl, updatedMsg);
+                await _httpRequestSender.PostToSlackAsync(interactionDto.ResponseUrl, updatedMsg);
                 await _notificationService.PublishPollVoteChanged(updatedPoll.Owner, updatedPoll.Id);
             }
             catch (System.Exception e)
@@ -78,7 +78,7 @@ namespace SlackPollingApp.Business.Service
                     View = ModalUiHelper.BuildWarningModal(warningMessage)
                 };
 
-                await _httpRequestSender.PostAsync(OpenViewUrl, warningModalDto);
+                await _httpRequestSender.PostToSlackAsync(OpenViewPath, warningModalDto);
                 
                 if (isInternalError)
                 {
@@ -107,7 +107,7 @@ namespace SlackPollingApp.Business.Service
                 View = modal
             };
 
-            await _httpRequestSender.PostAsync(UpdateViewUrl, updateRequest);
+            await _httpRequestSender.PostToSlackAsync(UpdateViewPath, updateRequest);
         }
         
         private async Task HandleModalSubmission(SlackInteractionDto interactionDto)
@@ -115,7 +115,7 @@ namespace SlackPollingApp.Business.Service
             var poll = await _pollService.CreatePoll(interactionDto);
 
             var messageDto = MessageUiHelper.ComposeInitialMessage(poll);
-            var result = await _httpRequestSender.PostAsync(PostMessageUrl, messageDto);
+            var result = await _httpRequestSender.PostToSlackAsync(PostMessagePath, messageDto);
             var resultDto = JsonSerializer.Deserialize<MessageCreatedDto>(result);
 
             await _pollService.UpdatePollTimestamp(poll.Id, resultDto?.Ts);

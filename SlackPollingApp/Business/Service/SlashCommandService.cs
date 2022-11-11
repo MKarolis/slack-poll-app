@@ -4,7 +4,7 @@ using SlackPollingApp.Core.Http;
 using SlackPollingApp.Model.Slack.Helper;
 using SlackPollingApp.Model.Slack.Request;
 
-using static SlackPollingApp.Model.Slack.Common.CommonSlackUris;
+using static SlackPollingApp.Model.Slack.Common.CommonSlackPaths;
 
 namespace SlackPollingApp.Business.Service
 {
@@ -27,7 +27,7 @@ namespace SlackPollingApp.Business.Service
                 View = modal
             };
             
-            await _httpRequestSender.PostAsync(OpenViewUrl, showModalDto);
+            await _httpRequestSender.PostToSlackAsync(OpenViewPath, showModalDto);
         }
     }
 }
