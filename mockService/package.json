@@ -1,0 +1,16 @@
+{
+  "name": "mockservice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node startServer.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mockserver-client": "^5.14.0",
+    "mockserver-node": "^5.14.0"
+  }
+}
