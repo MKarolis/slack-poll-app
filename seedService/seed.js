@@ -22,7 +22,7 @@ const optionSchema = new Schema({
     Title: { type: String },
     Value: { type: String },
     Votes: [voteSchema],
-})
+}, { _id : false })
 
 const pollSchema = new Schema({
     Title : { type: String },
