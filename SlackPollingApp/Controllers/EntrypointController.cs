@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using SlackPollingApp.Business.Service;
@@ -25,13 +26,13 @@ namespace SlackPollingApp.Controllers
         }
         
         [HttpPost("pollo")]
-        public async void SlashCommandEntrypoint([FromForm] SlashCommandInvokedRequest request)
+        public async Task SlashCommandEntrypoint([FromForm] SlashCommandInvokedRequest request)
         {
             await _slashCommandService.HandleSlashCommandEntry(request);
         }
 
         [HttpPost("action")]
-        public async void ActionEntrypoint([FromForm] Dictionary<string, string> request)
+        public async Task ActionEntrypoint([FromForm] Dictionary<string, string> request)
         {
             var payload = JsonSerializer.Deserialize<SlackInteractionDto>(request["payload"]);
             await _actionService.HandleIncomingAction(payload);

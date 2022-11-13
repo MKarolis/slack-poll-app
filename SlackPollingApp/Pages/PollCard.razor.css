@@ -64,14 +64,15 @@
     color: #FF3454 !important;
     background: none !important;
 }
-.view-results-btn:focus,
-primary:not(:disabled):not(.disabled):active:focus{
+
+.view-results-btn:focus {
     box-shadow: none !important;
 }
 
 .card-text .pink-accent{
     font-weight: 700;
 }
+
 .card-title{
     text-align: left;
     font-weight: 700;
