@@ -1,12 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using SlackPollingApp.Core.Config;
 using SlackPollingApp.Model.Auth;
 
 namespace SlackPollingApp.Business.Service
@@ -15,11 +12,12 @@ namespace SlackPollingApp.Business.Service
     {
 
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly SlackConfig _slackConfig;
 
-
-        public AuthService(IHttpClientFactory httpClientFactory)
+        public AuthService(IHttpClientFactory httpClientFactory, IOptions<SlackConfig> slackOptions)
         {
             _httpClientFactory = httpClientFactory;
+            _slackConfig = slackOptions.Value;
         }
 
         public async Task<SlackTokenResponse> GetAccessToken(string token)
@@ -33,7 +31,7 @@ namespace SlackPollingApp.Business.Service
             };
 
             var client = _httpClientFactory.CreateClient();
-            var response = await client.PostAsync("https://slack.com/api/oauth.v2.access", new FormUrlEncodedContent(formData));
+            var response = await client.PostAsync(_slackConfig.Host + "/api/oauth.v2.access", new FormUrlEncodedContent(formData));
 
             var responseData = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<SlackTokenResponse>(responseData);

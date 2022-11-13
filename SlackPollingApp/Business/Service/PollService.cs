@@ -53,7 +53,7 @@ namespace SlackPollingApp.Business.Service
             return await _pollRepository.GetPollByTs(messageTs);
         }
 
-        private void ValidateCanVote(Poll poll, string userId, string option)
+        private static void ValidateCanVote(Poll poll, string userId, string option)
         {
             if (poll.MultiSelect) return;
             if (poll.Options.Any(o => o.Value != option && o.Votes.Any(v => v.Id == userId)))

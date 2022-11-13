@@ -6,10 +6,13 @@ namespace SlackPollingApp.Controllers
     [Route("api/ping")]
     public class PingController : ControllerBase
     {
+
+        private const string PingResponse = "pong"; 
+        
         [HttpGet]
-        public string ping()
+        public string Ping()
         {
-            return "pong";
+            return PingResponse;
         }
     }
 }
