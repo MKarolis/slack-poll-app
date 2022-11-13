@@ -1,22 +1,16 @@
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SlackPollingApp.Business.Service;
 using SlackPollingApp.Core.Config;
 using SlackPollingApp.Core.Http;
-using SlackPollingApp.Model.Repository;
-using Microsoft.AspNetCore.ResponseCompression;
 using SlackPollingApp.Hubs;
+using SlackPollingApp.Model.Repository;
 
 namespace SlackPollingApp
 {
@@ -91,71 +85,6 @@ namespace SlackPollingApp
                 endpoints.MapHub<PollHub>(PollHub.HubUrl);
                 endpoints.MapRazorPages();
             });
-        }
-
-        private void ConfigureOpenId(IServiceCollection services)
-        {
-            // services.AddAuthentication(options =>
-            //     {
-            //         options.DefaultScheme = "Cookies";
-            //         options.DefaultChallengeScheme = "oidc";
-            //     })
-            //     .AddCookie("Cookies")
-            //     .AddOpenIdConnect("oidc", options =>
-            //     {
-            //         options.Authority = "https://demo.identityserver.io/";
-            //         options.ClientId = "interactive.confidential.short"; // 75 seconds
-            //         options.ClientSecret = "secret";
-            //         options.ResponseType = "code";
-            //         options.SaveTokens = true;
-            //         options.GetClaimsFromUserInfoEndpoint = true;
-            //
-            //         options.Events = new OpenIdConnectEvents
-            //         {
-            //             OnAccessDenied = context =>
-            //             {
-            //                 context.HandleResponse();
-            //                 context.Response.Redirect("/");
-            //                 return Task.CompletedTask;
-            //             }
-            //         };
-            //     });
-            
-            services.AddAuthentication(opt =>
-            {
-                opt.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                opt.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                opt.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-            }).AddCookie().AddOpenIdConnect("oidc", options =>
-            {
-                options.Authority = "https://slack.com/openid/connect/authorize/";
-                options.ResponseType = "code";
-                options.SaveTokens = true;
-                // options.GetClaimsFromUserInfoEndpoint = true;
-                // options.UseTokenLifetime = false;
-                options.Scope.Add("openid");
-                options.Scope.Add("profile");
-                options.Scope.Add("email");
-                options.TokenValidationParameters = new TokenValidationParameters{ NameClaimType = "name" };
-            
-                options.Events = new OpenIdConnectEvents
-                {
-                    OnAccessDenied = context =>
-                    {
-                        context.HandleResponse();
-                        context.Response.Redirect("/");
-                        return Task.CompletedTask;
-                    }
-                };
-            });
-            // services.AddMvcCore(options =>
-            // {
-            //     var policy = new AuthorizationPolicyBuilder()
-            //         .RequireAuthenticatedUser()
-            //         .Build();
-            //     options.Filters.Add(new AuthorizeFilter(policy));
-            // });
-            
         }
     }
 }

@@ -75,7 +75,7 @@ namespace SlackPollingApp.Model.Slack.Helper
                 modal.Blocks[actionsIndex] = new ActionsBuilder().WithRemoveButton().WithAddButton().Build();
             }
 
-            if (!(optionsCount >= MaxOptionsCount))
+            if (optionsCount < MaxOptionsCount)
                 modal.Blocks.Insert(actionsIndex, new InputBuilder(GetOptionActionId(optionsCount + 1))
                     .WithPlainInput()
                     .WithLabel($"Option {optionsCount + 1}")
@@ -98,7 +98,7 @@ namespace SlackPollingApp.Model.Slack.Helper
                 modal.Blocks[actionsIndex] = new ActionsBuilder().WithRemoveButton().WithAddButton().Build();
             }
 
-            if (!(optionsCount <= MinOptionsCount)) modal.Blocks.RemoveAt(actionsIndex - 1);
+            if (optionsCount > MinOptionsCount) modal.Blocks.RemoveAt(actionsIndex - 1);
         }
     }
 }
