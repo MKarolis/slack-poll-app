@@ -3,9 +3,9 @@
     <EditForm Model="@_model" OnSubmit="@FormSubmitted">
         <div class="p-1 bg-light rounded rounded-pill shadow-sm mb-4">
             <div class="input-group">
-                <input @bind="_model.Value" type="search" placeholder="Enter poll search criteria" aria-describedby="button-addon1" class="form-control border-0 bg-light">
+                <input @bind="_model.Value" type="search" placeholder="Enter poll search criteria" title="Poll search" aria-describedby="button-addon1" class="form-control border-0 bg-light">
                 <div class="input-group-append">
-                    <button id="button-addon1" type="submit" class="btn btn-link text-primary search-button">
+                    <button id="button-addon1" type="submit" class="btn btn-link text-primary search-button" title="Search" >
                         <i class="fa fa-search"></i>
                     </button>
                 </div>

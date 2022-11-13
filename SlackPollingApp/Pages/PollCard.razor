@@ -2,7 +2,7 @@
 <div class="col-md-6 col-sm-12">
     <div class="card">
         <div class="card-body">
-            <a href="#" @onfocusout="@(async () => await HandleCloseTooltip())" @onclick="HandleOpenTooltip" class="delete-poll-icon">
+            <a href="#" @onfocusout="@(async () => await HandleCloseTooltip())" @onclick="HandleOpenTooltip" class="delete-poll-icon" aria-label="Open context menu">
                 <i class="fa-solid fa-ellipsis-vertical" aria-hidden="true"></i>
             </a>
             @if (_tooltipVisible)
