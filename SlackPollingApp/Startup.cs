@@ -37,7 +37,8 @@ namespace SlackPollingApp
             services.AddSingleton<HttpRequestSender>();
             
             services.AddSingleton<MongoContext>();
-            services.AddSingleton<PollRepository>();
+            services.AddSingleton<IPollQueryRepository, PollQueryRepositoryImpl>();
+            services.AddSingleton<IPollUpdateRepository, PollUpdateRepositoryImpl>();
 
             services.AddSingleton<IPollService, PollService>();
             services.AddSingleton<PollService>();

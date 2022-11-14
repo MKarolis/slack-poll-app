@@ -1,16 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using MongoDB.Driver;
 using SlackPollingApp.Core.Config;
 using SlackPollingApp.Model.Entity;
 
 namespace SlackPollingApp.Model.Repository
 {
-    public class PollRepository
+    public class PollUpdateRepositoryImpl : IPollUpdateRepository
     {
         private readonly IMongoCollection<Poll> _polls;
 
-        public PollRepository(MongoContext mongoContext)
+        public PollUpdateRepositoryImpl(MongoContext mongoContext)
         {
             _polls = mongoContext.Database.GetCollection<Poll>("Polls");
             _polls.Indexes.CreateOne(new CreateIndexModel<Poll>("{ MessageTimestamp: 1 }"));
@@ -21,30 +20,6 @@ namespace SlackPollingApp.Model.Repository
             await _polls.InsertOneAsync(poll);
         }
 
-        public async Task<Poll> GetPollByTs(string ts)
-        {
-            var res = await _polls.FindAsync(Builders<Poll>.Filter.Eq(p => p.MessageTimestamp, ts));
-            return res.SingleOrDefault();
-        }
-        
-        public async Task<Poll> GetPollById(string id)
-        {
-            var res = await _polls.FindAsync(Builders<Poll>.Filter.Eq(p => p.Id, id));
-            return res.SingleOrDefault();
-        }
-
-        public async Task<List<Poll>> GetUserPolls(string userId)
-        {
-            var res = await _polls.FindAsync(
-                Builders<Poll>.Filter.Eq(p => p.Owner, userId),
-                new FindOptions<Poll>()
-                {
-                    Sort = Builders<Poll>.Sort.Descending(p => p.Date)
-                }
-                );
-            return await res.ToListAsync();
-        }
-        
         public async Task AddVote(string pollId, string optionValue, UserSummary userSummary)
         {
             var filter = Builders<Poll>.Filter;

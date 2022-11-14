@@ -15,19 +15,21 @@ namespace SlackPollingApp.Business.Service
 {
     public class PollService : IPollService
     {
-        private readonly PollRepository _pollRepository;
+        private readonly IPollUpdateRepository _pollUpdateRepository;
+        private readonly IPollQueryRepository _pollQueryRepository;
         private readonly HttpRequestSender _httpRequestSender;
 
-        public PollService(PollRepository pollRepository, HttpRequestSender httpRequestSender)
+        public PollService(IPollUpdateRepository pollUpdateRepository, IPollQueryRepository pollQueryRepository, HttpRequestSender httpRequestSender)
         {
-            _pollRepository = pollRepository;
+            _pollUpdateRepository = pollUpdateRepository;
+            _pollQueryRepository = pollQueryRepository;
             _httpRequestSender = httpRequestSender;
         }
 
         public async Task<Poll> CreatePoll(SlackInteractionDto interactionDto)
         {
             var poll = PollMapper.map(interactionDto);
-            await _pollRepository.Insert(poll);
+            await _pollUpdateRepository.Insert(poll);
 
             return poll;
         }
@@ -38,19 +40,19 @@ namespace SlackPollingApp.Business.Service
             var option = interactionDto.Actions.First().ActionId;
             var userId = interactionDto.User.Id;
             
-            var poll = await _pollRepository.GetPollByTs(messageTs);
+            var poll = await _pollQueryRepository.GetPollByTs(messageTs);
             ValidateCanVote(poll, userId, option);
             
             if (poll.Options.Find(o => o.Value == option)!.Votes.Any(v => v.Id == userId))
             {
-                await _pollRepository.RemoveVote(poll.Id, option, new UserSummary{Id = userId, Name = interactionDto.User.Name});
+                await _pollUpdateRepository.RemoveVote(poll.Id, option, new UserSummary{Id = userId, Name = interactionDto.User.Name});
             }
             else
             {
-                await _pollRepository.AddVote(poll.Id, option, new UserSummary{Id = userId, Name = interactionDto.User.Name} );
+                await _pollUpdateRepository.AddVote(poll.Id, option, new UserSummary{Id = userId, Name = interactionDto.User.Name} );
             }
             
-            return await _pollRepository.GetPollByTs(messageTs);
+            return await _pollQueryRepository.GetPollByTs(messageTs);
         }
 
         private static void ValidateCanVote(Poll poll, string userId, string option)
@@ -64,13 +66,13 @@ namespace SlackPollingApp.Business.Service
 
         public async Task UpdatePollTimestamp(string pollId, string ts)
         {
-            await _pollRepository.UpdatePollTimestamp(pollId, ts);
+            await _pollUpdateRepository.UpdatePollTimestamp(pollId, ts);
         }
 
         public async Task SetPollLocked(string pollId, bool locked)
         {
-            await _pollRepository.SetPollLocked(pollId, locked);
-            var updatedPoll = await _pollRepository.GetPollById(pollId);
+            await _pollUpdateRepository.SetPollLocked(pollId, locked);
+            var updatedPoll = await _pollQueryRepository.GetPollById(pollId);
             var updatedMsg = new PostMessageDto
             {
                 Channel = updatedPoll.ChannelId,
@@ -82,13 +84,13 @@ namespace SlackPollingApp.Business.Service
 
         public async Task<List<Poll>> GetUserPollsAsync(string userId)
         {
-            return await _pollRepository.GetUserPolls(userId);
+            return await _pollQueryRepository.GetUserPolls(userId);
         }
 
         public async Task DeletePollById(string pollId)
         {
-            var poll = await _pollRepository.GetPollById(pollId);
-            await _pollRepository.DeleteById(pollId);
+            var poll = await GetPollByIdAsync(pollId);
+            await _pollUpdateRepository.DeleteById(pollId);
 
             var deleteMessageDto = new DeleteMessageDto
             {
@@ -101,7 +103,7 @@ namespace SlackPollingApp.Business.Service
 
         public async Task<Poll> GetPollByIdAsync(string pollId)
         {
-            return await _pollRepository.GetPollById(pollId);
+            return await _pollQueryRepository.GetPollById(pollId);
         }
     }
 }
