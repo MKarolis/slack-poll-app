@@ -70,13 +70,13 @@ public class ActionServiceTest
         await _actionService.HandleIncomingAction(_interactionDto);
             
         _httpRequestSender.Verify(
-            s => s.PostAsync(It.IsAny<string>(), It.IsAny<PostMessageDto>()),
+            s => s.PostToSlackByPathAsync(It.IsAny<string>(), It.IsAny<PostMessageDto>()),
             Times.Never());
         _notificationService.Verify(
             s => s.PublishPollVoteChanged(It.IsAny<string>(), It.IsAny<string>()),
             Times.Never());
         _httpRequestSender.Verify(
-            s => s.PostAsync(
+            s => s.PostToSlackByPathAsync(
                 It.IsAny<string>(), 
                 It.Is<ShowViewDto>(view => view.View.Blocks[0].Text.Text.Contains("You cannot vote")))
             );
@@ -96,7 +96,7 @@ public class ActionServiceTest
             s => s.PublishPollVoteChanged(It.IsAny<string>(), It.IsAny<string>()),
             Times.Never());
         _httpRequestSender.Verify(
-            s => s.PostAsync(
+            s => s.PostToSlackByPathAsync(
                 It.IsAny<string>(), 
                 It.Is<ShowViewDto>(view => view.View.Blocks[0].Text.Text.Contains("Unexpected error")))
         );
