@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using SlackPollingApp.Business.Service;
+using SlackPollingApp.Business.Service.ActionHandler.Factory;
 using SlackPollingApp.Core.Config;
 using SlackPollingApp.Core.Http;
 using SlackPollingApp.Hubs;
@@ -40,6 +41,7 @@ namespace SlackPollingApp
 
             services.AddSingleton<IPollService, PollService>();
             services.AddSingleton<PollService>();
+            services.AddSingleton<IActionHandlerFactory, ActionHandlerFactory>();
             services.AddSingleton<ActionService>();
             services.AddSingleton<SlashCommandService>();
             services.AddSingleton<AuthService>();
