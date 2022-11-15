@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using SlackPollingApp.Business.Service;
-using SlackPollingApp.Hubs;
 using SlackPollingApp.Model.Slack.Data;
 using SlackPollingApp.Model.Slack.Request;
 
@@ -24,7 +21,7 @@ namespace SlackPollingApp.Controllers
             _slashCommandService = slashCommandService;
             _actionService = actionService;
         }
-        
+
         [HttpPost("pollo")]
         public async Task SlashCommandEntrypoint([FromForm] SlashCommandInvokedRequest request)
         {

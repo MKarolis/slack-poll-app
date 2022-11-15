@@ -12,7 +12,6 @@ namespace SlackPollingApp.Model.Repository
         public PollUpdateRepositoryImpl(MongoContext mongoContext)
         {
             _polls = mongoContext.Database.GetCollection<Poll>("Polls");
-            _polls.Indexes.CreateOne(new CreateIndexModel<Poll>("{ MessageTimestamp: 1 }"));
         }
 
         public async Task Insert(Poll poll)

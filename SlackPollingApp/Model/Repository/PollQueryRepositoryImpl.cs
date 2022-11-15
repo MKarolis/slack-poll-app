@@ -14,7 +14,7 @@ namespace SlackPollingApp.Model.Repository
         {
             _polls = mongoContext.Database.GetCollection<Poll>("Polls");
         }
-        
+
         public async Task<Poll> GetPollByTs(string ts)
         {
             var res = await _polls.FindAsync(Builders<Poll>.Filter.Eq(p => p.MessageTimestamp, ts));
